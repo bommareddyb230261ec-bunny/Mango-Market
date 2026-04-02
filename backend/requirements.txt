@@ -8,7 +8,7 @@ itsdangerous>=2.1
 # Database
 sqlalchemy>=2.0
 pymysql>=1.1.0
-mysqlconnector==8.0.33
+mysql-connector-python==8.0.33
 
 # Security & Encryption
 cryptography>=40.0
