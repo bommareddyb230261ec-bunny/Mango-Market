@@ -21,9 +21,6 @@ email-validator>=1.2.0
 pydantic>=1.9
 starlette>=0.25
 
-# Testing & Code Quality
-pytest>=7.0
-pytest-cov>=4.0
 
 # Production Server & WSGI
 gunicorn>=20.1.0
@@ -34,9 +31,6 @@ flask-limiter>=3.3.0
 # Caching (Optional but recommended for production)
 cachetools>=5.0
 
-# Async Background Tasks (for email sending)
-celery>=5.2.0
-redis>=4.3.0  # For Celery broker (optional, can use database)
 
 # Monitoring & Logging (Optional for production)
 # python-json-logger>=2.0.0
