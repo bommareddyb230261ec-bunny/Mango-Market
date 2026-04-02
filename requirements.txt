@@ -1,0 +1,46 @@
+# Core Flask Dependencies
+flask>=2.3
+flask-cors>=4.0
+flask-sqlalchemy>=3.0
+werkzeug>=2.2
+itsdangerous>=2.1
+
+# Database
+sqlalchemy>=2.0
+pymysql>=1.1.0
+mysqlconnector==8.0.33
+
+# Security & Encryption
+cryptography>=40.0
+python-dotenv>=0.19.0
+
+# Email & Notifications
+email-validator>=1.2.0
+
+# API & Data Validation
+pydantic>=1.9
+starlette>=0.25
+
+# Testing & Code Quality
+pytest>=7.0
+pytest-cov>=4.0
+
+# Production Server & WSGI
+gunicorn>=20.1.0
+
+# Rate Limiting
+flask-limiter>=3.3.0
+
+# Caching (Optional but recommended for production)
+cachetools>=5.0
+
+# Async Background Tasks (for email sending)
+celery>=5.2.0
+redis>=4.3.0  # For Celery broker (optional, can use database)
+
+# Monitoring & Logging (Optional for production)
+# python-json-logger>=2.0.0
+
+# Additional Utilities
+cryptography>=40.0
+pytz>=2023.3

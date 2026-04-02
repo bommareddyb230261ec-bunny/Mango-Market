@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Host Access - Mango Market Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .password-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .password-container h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .password-container p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .password-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .password-form input {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .password-form input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .password-form button {
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .password-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .password-form button:active {
+            transform: translateY(0);
+        }
+
+        #errorMessage {
+            display: none;
+            color: #e74c3c;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 15px;
+            padding: 10px;
+            background: #fadbd8;
+            border-radius: 5px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="password-container">
+        <div class="logo">🔐</div>
+        <h1>Host Access</h1>
+        <p>Enter the host password to access the broker verification panel</p>
+        <div class="password-form">
+            <input 
+                type="password" 
+                id="hostPassword" 
+                placeholder="Enter host password"
+                autocomplete="off"
+            >
+            <button 
+                type="button" 
+                id="verifyAccessBtn"
+                onclick="verifyHostAccess()"
+            >
+                Verify Access
+            </button>
+            <div id="errorMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Host Access Authentication
+         * Handles password verification for broker verification panel access
+         * Password: Charan.56 (hashed in backend)
+         */
+
+        // API endpoint configuration
+        const API_BASE = `${location.protocol}//${location.hostname}:5000`;
+
+        // ============================================
+        // PAGE INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[Host Access] Page loaded');
+            console.log('[Host Access] API Base:', API_BASE);
+            
+            // Check if already authenticated
+            const verified = localStorage.getItem('host_password_verified');
+            if (verified === 'true') {
+                console.log('[Host Access] Already authenticated - redirecting to dashboard');
+                window.location.href = 'host_dashboard.html';
+                return;
+            }
+            
+            // Setup event listeners
+            const passwordInput = document.getElementById('hostPassword');
+            if (passwordInput) {
+                // Allow Enter key to submit
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        verifyHostAccess();
+                    }
+                });
+                
+                // Set focus on password input
+                setTimeout(() => passwordInput.focus(), 200);
+            }
+            
+            // Setup verify button
+            const verifyBtn = document.getElementById('verifyAccessBtn');
+            if (verifyBtn) {
+                verifyBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    verifyHostAccess();
+                });
+            }
+        });
+
+        // ============================================
+        // PASSWORD VERIFICATION
+        // ============================================
+        async function verifyHostAccess() {
+            const password = (document.getElementById('hostPassword') || {}).value || '';
+            const errorMsg = document.getElementById('errorMessage');
+            
+            if (!password) {
+                if (errorMsg) {
+                    errorMsg.textContent = 'Please enter the host password';
+                    errorMsg.style.display = 'block';
+                }
+                return;
+            }
+            
+            try {
+                console.log('[Host Access] Verifying password...');
+                
+                const response = await fetch(`${API_BASE}/api/host/verify-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ password: password }),
+                    credentials: 'include'
+                });
+
+                console.log('[Host Access] API Response Status:', response.status);
+
+                const data = await response.json();
+                console.log('[Host Access] API Response Data:', data);
+                
+                if (data.success === true && data.access_granted === true) {
+                    console.log('✅ [Host Access] Password verified successfully - redirecting to dashboard');
+                    
+                    // Clear any error messages
+                    if (errorMsg) {
+                        errorMsg.style.display = 'none';
+                        errorMsg.textContent = '';
+                    }
+                    
+                    // Store verification token in localStorage
+                    localStorage.setItem('host_password_verified', 'true');
+                    localStorage.setItem('host_access_time', new Date().getTime().toString());
+                    console.log('[Host Access] Session stored in localStorage');
+                    
+                    // Redirect to host_dashboard.html
+                    setTimeout(() => {
+                        window.location.href = 'host_dashboard.html';
+                    }, 500);
+                } else {
+                    console.error('[Host Access] Password verification failed:', data.message);
+                    
+                    if (errorMsg) {
+                        errorMsg.textContent = data.message || '❌ Invalid host password. Try again.';
+                        errorMsg.style.display = 'block';
+                    }
+                    
+                    // Clear the password input and refocus
+                    const passInput = document.getElementById('hostPassword');
+                    passInput.value = '';
+                    passInput.focus();
+                    passInput.select();
+                }
+            } catch (error) {
+                console.error('[Host Access] Error during authentication:', error);
+                if (errorMsg) {
+                    errorMsg.textContent = `⚠️ Error: ${error.message}\\nPlease ensure backend is running at ${API_BASE}`;
+                    errorMsg.style.display = 'block';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
