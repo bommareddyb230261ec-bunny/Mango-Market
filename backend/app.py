@@ -5,13 +5,9 @@ Handles all three systems: Farmer, Broker, and Host
 
 ⚠️ PRODUCTION NOTE:
 This module creates the Flask app for GUNICORN. DO NOT use app.run() in production.
-<<<<<<< HEAD
-Run with: gunicorn app:app
-=======
 For Azure App Service, deploy with Gunicorn:
   - Use requirements.txt with: gunicorn>=20.1.0
   - Azure startup command: gunicorn --workers 4 --worker-class sync --bind 0.0.0.0:8000 app:app
->>>>>>> 8413c5c (Updated project for Azure deployment (wsgi + config fixes))
 """
 
 import sys
@@ -47,29 +43,6 @@ except ImportError as e:
     logger.error(f"Failed to import create_app from main.py: {e}")
     sys.exit(1)
 
-<<<<<<< HEAD
-# Create the Flask app instance
-app = create_app()
-
-# ✅ ADD THIS ROUTE (IMPORTANT FIX)
-@app.route("/")
-def home():
-    return "Backend is running 🚀"
-
-# ---------------------------------------------------
-# Development server (DO NOT use in production)
-# ---------------------------------------------------
-if __name__ == '__main__':
-    import logging
-
-    logging.info("Starting Mango Market Platform (Development Mode)...")
-    logging.info("For production, use: gunicorn app:app")
-
-    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() in ('true', '1')
-    host = os.getenv('FLASK_HOST', '127.0.0.1')
-    port = int(os.getenv('FLASK_PORT', '5000'))
-
-=======
 # =====================================================
 # CREATE FLASK APP INSTANCE
 # =====================================================
@@ -154,7 +127,6 @@ if __name__ == "__main__":
     port = int(os.getenv("FLASK_PORT", "5000"))
 
     # Start development server
->>>>>>> 8413c5c (Updated project for Azure deployment (wsgi + config fixes))
     app.run(
         debug=debug_mode,
         host=host,
